@@ -1,7 +1,4 @@
 
-
-
-
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                = "${azurerm_resource_group.aks_rg.name}-cluster"
   location            = azurerm_resource_group.aks_rg.location
@@ -75,4 +72,12 @@ network_profile {
   tags = {
     Environment = "dev"
   } 
+}
+
+resource "azurerm_role_assignment" "azure_role_assign" {
+  principal_id                     = azurerm_kubernetes_cluster.aks_cluster.kubelet_identity[0].object_id
+  role_definition_name             = "AcrPull"
+  scope                            = azurerm_container_registry.acr.id
+  skip_service_principal_aad_check = true
+  
 }
