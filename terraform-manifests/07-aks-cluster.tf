@@ -19,13 +19,13 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     type                 = "VirtualMachineScaleSets"
     node_labels = {
       "nodepool-type"    = "system"
-      "environment"      = "dev"
+      "environment"      = "UAT"
       "nodepoolos"       = "linux"
       "app"              = "system-apps" 
     } 
    tags = {
       "nodepool-type"    = "system"
-      "environment"      = "dev"
+      "environment"      = "UAT"
       "nodepoolos"       = "linux"
       "app"              = "system-apps" 
    } 
@@ -70,7 +70,7 @@ network_profile {
   }
 
   tags = {
-    Environment = "dev"
+    Environment = "UAT"
   } 
 }
 
