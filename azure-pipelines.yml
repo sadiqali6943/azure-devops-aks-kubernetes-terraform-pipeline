@@ -5,10 +5,8 @@ pool:
 
 # Define Variables for Environments
 variables:
-- name: DEV_ENVIRONMENT
-  value: dev
-- name: QA_ENVIRONMENT
-  value: qa  
+- name: UAT_ENVIRONMENT
+  value: uat  
 
 # Stage-1: Terraform Validate Stage
 ## Step-1: Publish Artifacts to Pipeline (Pipeline artifacts provide a way to share files between stages in a pipeline or between different pipelines. )
@@ -54,11 +52,11 @@ stages:
 
 - stage: DeployAKSClusters
   jobs:
-    - deployment: DeployDevAKSCluster
-      displayName: DeployDevAKSCluster
+    - deployment: DeployUatAKSCluster
+      displayName: DeployUatAKSCluster
       pool:
         vmImage: 'ubuntu-latest'
-      environment: $(DEV_ENVIRONMENT)      
+      environment: $(UAT_ENVIRONMENT)      
       strategy:
         runOnce:
           deploy:
@@ -80,7 +78,7 @@ stages:
                 command: 'plan'
                 workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
                 environmentServiceName: 'terraform-aks-azurerm-svc-con'
-                commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(DEV_ENVIRONMENT) -out $(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).out'
+                commandOptions: '-var ssh_public_key=$(sshkey.secureFilePath) -var environment=$(UAT_ENVIRONMENT) -out $(Pipeline.Workspace)/terraform-manifests-out/$(UAT_ENVIRONMENT)-$(Build.BuildId).out'
                 allowTelemetryCollection: false
             - task: TerraformCLI@0
               displayName: Terraform Apply
@@ -88,5 +86,5 @@ stages:
                 command: 'apply'
                 workingDirectory: '$(Pipeline.Workspace)/terraform-manifests-out'
                 environmentServiceName: 'terraform-aks-azurerm-svc-con'
-                commandOptions: '$(Pipeline.Workspace)/terraform-manifests-out/$(DEV_ENVIRONMENT)-$(Build.BuildId).out'
+                commandOptions: '$(Pipeline.Workspace)/terraform-manifests-out/$(UAT_ENVIRONMENT)-$(Build.BuildId).out'
                 allowTelemetryCollection: false
